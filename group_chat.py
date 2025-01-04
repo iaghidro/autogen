@@ -4,7 +4,7 @@ from autogen_agentchat.teams import SelectorGroupChat
 from autogen_agentchat.conditions import TextMentionTermination
 from autogen_agentchat.ui import Console
 
-from shared.local_executor import create_local_code_executor
+from shared.executors import create_docker_executor
 from shared.model_client import OpenAIModel, create_model_client
 
 SELECTOR_PROMPT = """
@@ -19,15 +19,18 @@ Rules:
 3. Otherwise, if the conversation isn't finished, keep letting the assistant or code_executor speak to each other.
    - Typically, if the assistant needs to run code, it calls code_executor next.
    - If code_executor has responded and there's more to do, choose assistant next.
-4. Output only the role name of the next speaker, or nothing if we are done.
-5. Only select the code_executor if there is code to be executed.
+   - The assistant can speak to itself as well.
+4. DO NOT choose code_executor unless there is code to be executed.
+5. DO NOT choose user_proxy unless the last message contains "REQUEST_USER".
+6. If there are errors thrown related to issues with API calls select user_proxy.
+7. Output only the role name of the next speaker, or nothing if we are done.
 """
 
 async def run_group_chat_with_human_intervention() -> None:
     # Create code executor agent
     code_executor_agent = CodeExecutorAgent(
         name="code_executor",
-        code_executor=create_local_code_executor(),
+        code_executor= await create_docker_executor(),
     )
 
     # Create assistant agent
@@ -36,9 +39,10 @@ async def run_group_chat_with_human_intervention() -> None:
         model_client=create_model_client(OpenAIModel.GPT_4O_MINI),
         # Advise the assistant to only mention REQUEST_USER if it cannot proceed or needs user approval
         system_message=(
-            "You are a helpful assistant especially coding with access to 'code_executor'. Request to install any necessary libraries."
-            "You only mention 'REQUEST_USER' if you are stuck and have attempted a fix at least 10 times."
+            "You are a helpful assistant especially coding with access to 'code_executor'. Install any necessary libraries using the code_executor."
+            "You only mention 'REQUEST_USER' if you are stuck and have attempted a fix at least 30 times. DO NOT request user for library installations"
             "If you're completely finished without user approval, say 'REQUEST_USER'."
+            "If you mention 'REQUEST_USER', provide a reason in the following format: REQUEST_USER: <reason>"
         )
     )
 
