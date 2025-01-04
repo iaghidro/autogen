@@ -2,7 +2,7 @@ import os
 import asyncio
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
-from autogen_agentchat.teams import RoundRobinGroupChat
+from autogen_agentchat.teams import SelectorGroupChat
 from autogen_agentchat.conditions import TextMentionTermination
 from autogen_agentchat.ui import Console
 from shared.local_executor import create_local_code_executor
@@ -22,11 +22,15 @@ async def run_group_chat() -> None:
     # The system message is not supported by the o1 series model.
     assistantAgent = AssistantAgent(name="assistant", model_client=model_client, system_message=None)
     
-    # Define termination condition
-    termination = TextMentionTermination("TERMINATE")
+    termination_condition = TextMentionTermination("TERMINATE")
     
     # Define a team
-    agent_team = RoundRobinGroupChat([assistantAgent,code_executor_agent], termination_condition=termination, max_turns=30)
+    agent_team = SelectorGroupChat(
+        participants=[assistantAgent,code_executor_agent], 
+        termination_condition=termination_condition,
+        model_client=model_client, # todo: use o1
+        max_turns=30
+    )
 
     # Run the team and stream messages to the console
     stream = agent_team.run_stream(task="Plot a chart of META and TESLA stock price change. save the chart to an image")
