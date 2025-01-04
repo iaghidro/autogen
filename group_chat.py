@@ -57,7 +57,7 @@ async def run_group_chat_with_human_intervention() -> None:
         participants=[assistant_agent, code_executor_agent, user_proxy_agent],
         termination_condition=TextMentionTermination("APPROVE"),
         model_client=create_model_client(OpenAIModel.GPT_4O_MINI),
-        max_turns=30,
+        max_turns=None,
         selector_prompt=SELECTOR_PROMPT,
     )
 
