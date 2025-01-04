@@ -11,6 +11,9 @@ class OpenAIModel(Enum):
 def create_model_client(model: OpenAIModel):
     model_client = OpenAIChatCompletionClient(
         model=model.value,
-        api_key=os.environ.get("OPENAI_API_KEY")
+        api_key=os.environ.get("OPENAI_API_KEY"),
+        max_retries=5,
+        retry_delay=2,
+        timeout=70,
     )
     return model_client
