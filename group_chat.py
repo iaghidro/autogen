@@ -16,6 +16,8 @@ from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 
 from dotenv import load_dotenv
 
+load_dotenv()
+
 async def run_group_chat() -> None:
     # Create a code executor agent that executes locally
     work_dir = Path("coding")
@@ -28,7 +30,8 @@ async def run_group_chat() -> None:
     code_executor_agent = CodeExecutorAgent("code_executor", code_executor=local_executor)
     
     model_client = OpenAIChatCompletionClient(
-        model="o1-mini",
+        model="gpt-4o-mini",
+        # model="o1-mini",
         api_key=os.environ.get("OPENAI_API_KEY")
     )
     # The system message is not supported by the o1 series model.

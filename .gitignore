@@ -1,3 +1,4 @@
 **/**.env
 **/**/coding
 **/**/.cache
+**/**/.DS_Store
