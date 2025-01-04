@@ -1,8 +1,9 @@
 import tempfile
 import os
 import asyncio
-from dataclasses import dataclass
+import venv
 
+from pathlib import Path
 from autogen_core import CancellationToken
 from autogen_agentchat.messages import TextMessage
 from autogen_ext.code_executors.docker import DockerCommandLineCodeExecutor
@@ -11,14 +12,20 @@ from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.conditions import TextMentionTermination
 from autogen_agentchat.ui import Console
+from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 
 from dotenv import load_dotenv
 
 async def run_group_chat() -> None:
-    # Create a code executor agent that uses a Docker container to execute code.
-    code_executor = DockerCommandLineCodeExecutor(work_dir="coding")
-    await code_executor.start()
-    code_executor_agent = CodeExecutorAgent("code_executor", code_executor=code_executor)
+    # Create a code executor agent that executes locally
+    work_dir = Path("coding")
+    work_dir.mkdir(exist_ok=True)
+    venv_dir = work_dir / ".venv"
+    venv_builder = venv.EnvBuilder(with_pip=True)
+    venv_builder.create(venv_dir)
+    venv_context = venv_builder.ensure_directories(venv_dir)
+    local_executor = LocalCommandLineCodeExecutor(work_dir=work_dir, virtual_env_context=venv_context)
+    code_executor_agent = CodeExecutorAgent("code_executor", code_executor=local_executor)
     
     model_client = OpenAIChatCompletionClient(
         model="o1-mini",
