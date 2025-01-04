@@ -38,10 +38,10 @@ async def run_group_chat() -> None:
     termination = TextMentionTermination("TERMINATE")
     
     # Define a team
-    agent_team = RoundRobinGroupChat([code_executor_agent,assistantAgent], termination_condition=termination, max_turns=30)
+    agent_team = RoundRobinGroupChat([assistantAgent,code_executor_agent], termination_condition=termination, max_turns=30)
 
     # Run the team and stream messages to the console
-    stream = agent_team.run_stream(task="Plot a chart of META and TESLA stock price change. Install any necessary dependencies")
+    stream = agent_team.run_stream(task="Plot a chart of META and TESLA stock price change. save the chart to an image")
     await Console(stream)
 
 asyncio.run(run_group_chat())
