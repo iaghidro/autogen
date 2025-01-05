@@ -21,10 +21,10 @@ user_proxy = UserProxyAgent(
     human_input_mode="TERMINATE",  
     code_execution_config={
         "work_dir": "coding",
-        "use_docker": True,
+        "use_docker": False,
     },
 )
 
 user_proxy.initiate_chat(
-    assistant, message="Plot a chart of META and TESLA stock price change. Install any necessary dependencies"
+    assistant, message="Create a chart of META and TESLA stock price changes. Save the chart to an image, and don't open the file."
 )
