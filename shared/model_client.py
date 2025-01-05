@@ -12,7 +12,9 @@ def create_model_client(model: OpenAIModel):
     model_client = OpenAIChatCompletionClient(
         model=model.value,
         api_key=os.environ.get("OPENAI_API_KEY"),
-        max_retries=5,
+        cache=False,
+        # temperature=0.3,
+        max_retries=8,
         retry_delay=2,
         timeout=70,
     )
