@@ -17,7 +17,7 @@ async def main():
         name="assistant",
         model_client=create_model_client(OpenAIModel.GPT_4O_MINI),
         handoffs=[Handoff(target="user", message="Transfer to user.")],
-        system_message="You are a capable AI assistant. Only hand off to the user if you're stuck or have completed the task."
+        system_message="You are a helpful AI assistant. Only hand off to the user if you're stuck after several attempts or have completed the task."
     )
 
     team = RoundRobinGroupChat(
