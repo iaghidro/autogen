@@ -1,4 +1,3 @@
-
 import venv
 from pathlib import Path
 from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
@@ -11,32 +10,16 @@ from autogen_agentchat.base import Handoff
 from shared.model_client import OpenAIModel, create_model_client
 
 from typing import List, Optional
-def create_local_code_executor():
-    work_dir = Path("coding")
-    work_dir.mkdir(exist_ok=True)
-    venv_dir = work_dir / ".venv"
-    venv_builder = venv.EnvBuilder(with_pip=True)
-    venv_builder.create(venv_dir)
-    venv_context = venv_builder.ensure_directories(venv_dir)
-    local_executor = LocalCommandLineCodeExecutor(work_dir=work_dir, virtual_env_context=venv_context)
-    return local_executor
-
-async def execute_code(code: str) -> str:
-    executor = create_local_code_executor() 
-    code_block = CodeBlock(code, language="python")
-    return await executor.execute_code_blocks([code_block], CancellationToken())
-
-async def create_docker_executor():
-    code_executor = DockerCommandLineCodeExecutor(work_dir="coding")
-    await code_executor.start()
-    return code_executor
 
 class CodingAgent:
     def __init__(
         self,
         name: str = "assistant",
-        model_client=None,
-        description: str = "A helpful and general-purpose AI assistant that has strong language skills, Python skills, and Linux command line skills.",
+        model_client=create_model_client(OpenAIModel.GPT_4O_MINI),
+        description: str = (
+            "A helpful and general-purpose AI assistant that has strong language "
+            "skills, Python skills, and Linux command line skills."
+        ),
         system_message: str = """
 You are a helpful AI assistant. Solve tasks using your coding executor tool.
 In the following cases, suggest python code (in a python coding block) or shell script (in a sh coding block) for execution.
@@ -57,12 +40,13 @@ collect additional info you need, and think of a different approach to try. Repe
 When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
 Hand off to the user only as a last resort—either after multiple failed attempts to fix the issue using different approaches or upon fully completing the task.
         """,
-        tools: List = [execute_code],
-        handoffs: List = [Handoff(target="user", message="Transfer to user.")],
+        tools: Optional[List] = None,
+        handoffs: Optional[List] = [Handoff(target="user", message="Transfer to user.")],
     ):
-        if model_client is None:
-            model_client = create_model_client(OpenAIModel.GPT_4O_MINI)
-        
+        # Default to using self.execute_code if no tools are provided
+        if tools is None:
+            tools = [self.execute_code]
+
         self.agent = AssistantAgent(
             name=name,
             model_client=model_client,
@@ -74,3 +58,27 @@ Hand off to the user only as a last resort—either after multiple failed attemp
 
     def get_agent(self):
         return self.agent
+    
+    async def execute_code(self, code: str) -> str: 
+        executor = self.create_local_code_executor() 
+        code_block = CodeBlock(code, language="python")
+        return await executor.execute_code_blocks([code_block], CancellationToken())
+
+    def create_local_code_executor(self): 
+        work_dir = Path("coding")
+        work_dir.mkdir(exist_ok=True)
+        venv_dir = work_dir / ".venv"
+        venv_builder = venv.EnvBuilder(with_pip=True)
+        venv_builder.create(venv_dir)
+        venv_context = venv_builder.ensure_directories(venv_dir)
+        local_executor = LocalCommandLineCodeExecutor(
+            work_dir=work_dir,
+            virtual_env_context=venv_context
+        )
+        return local_executor
+
+
+    async def create_docker_executor(self): 
+        code_executor = DockerCommandLineCodeExecutor(work_dir="coding")
+        await code_executor.start()
+        return code_executor
