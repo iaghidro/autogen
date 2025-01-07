@@ -14,13 +14,22 @@ To set up the project, follow these steps:
    conda activate agstudio
    ```
 
-2. Install the required package:
+2. Install autogen
+   ```
+   pip install "autogen-agentchat==0.4.0.dev13"
+   pip install "autogen-ext==0.4.0.dev13"
+   pip install "autogen-ext[openai]==0.4.0.dev13"
+   ```
+
+## Autogen Studio
+
+1. Install the required package for Autogen Studio:
 
    ```bash
    pip install autogenstudio==0.4.0.dev41
    ```
 
-3. Run Autogen Studio (The UI provided for autogen)
+2. Run Autogen Studio (The UI provided for autogen)
    ```bash
    autogenstudio ui --port 8081 --appdir /Users/iaghidro/repos/autogen/studio
    ```
