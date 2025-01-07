@@ -31,7 +31,7 @@ async def create_docker_executor():
     await code_executor.start()
     return code_executor
 
-class SoftwareEngineerAgent:
+class CodingAgent:
     def __init__(
         self,
         name: str = "assistant",

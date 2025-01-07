@@ -3,14 +3,14 @@ from autogen_agentchat.conditions import HandoffTermination
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.ui import Console
 
-from shared.executors import SoftwareEngineerAgent
+from shared.executors import CodingAgent
 
 async def main():
 
-    engineer_agent = SoftwareEngineerAgent().get_agent()
+    coding_agent = CodingAgent().get_agent()
 
     team = RoundRobinGroupChat(
-        participants=[engineer_agent],
+        participants=[coding_agent],
         termination_condition=HandoffTermination(target="user"),
     )
 
