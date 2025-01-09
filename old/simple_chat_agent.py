@@ -3,6 +3,7 @@ from autogen import AssistantAgent, UserProxyAgent
 from dotenv import load_dotenv
 
 load_dotenv()
+# to use with the old autogen (before the rebuild of 0.4)
 
 model = "gpt-4o-mini"
 llm_config = {
