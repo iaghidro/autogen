@@ -8,6 +8,15 @@
 2. Install Conda
    Installation docs found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
+3. Install playwright for websurfing capabilities. Docs found [here](https://playwright.dev/python/docs/library#conda)
+
+   ```shell
+   conda config --add channels conda-forge
+   conda config --add channels microsoft
+   conda install playwright
+   playwright install
+   ```
+
 ## Main Setup
 
 To set up the project, follow these steps. For more info refrence the installation docs [here](https://microsoft.github.io/autogen/dev/user-guide/agentchat-user-guide/installation.html):
@@ -33,7 +42,7 @@ To set up the project, follow these steps. For more info refrence the installati
 
 4. Install autogen
    ```shell
-   pip install -U "autogen-agentchat" "autogen-ext" "autogen-ext[openai]"
+   pip install -U "autogen-agentchat" "autogen-ext" "autogen-ext[openai,web-surfer]"
    ```
 
 ## Autogen Studio
