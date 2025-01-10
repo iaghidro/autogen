@@ -1,36 +1,51 @@
 # Project Documentation
 
+# Prereqs
+
+1. Environment Variables
+   Make sure to set the `OPENAI_API_KEY` environment variable with your OpenAI API key to allow the application to function correctly. This needs to be added to a `.env` file at the root of the repo.
+
+2. Install Conda
+   Installation docs found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+
 ## Main Setup
 
-To set up the project, follow these steps:
+To set up the project, follow these steps. For more info refrence the installation docs [here](https://microsoft.github.io/autogen/dev/user-guide/agentchat-user-guide/installation.html):
 
-0. Environment Variables
-   Make sure to set the `OPENAI_API_KEY` environment variable with your OpenAI API key to allow the application to function correctly.
+3. Create a new conda environment:
 
-1. Create a new conda environment:
-
-   ```bash
-   conda create -n agstudio python=3.11
-   conda activate agstudio
+   ```shell
+   conda create -n ag-mic python=3.12
+   conda activate ag-mic
    ```
 
-2. Install autogen
+   delete if necessary by running:
+
+   ```shell
+   conda remove --name ag-mic --all
    ```
-   pip install "autogen-agentchat==0.4.0.dev13"
-   pip install "autogen-ext==0.4.0.dev13"
-   pip install "autogen-ext[openai]==0.4.0.dev13"
+
+   to deactive later run:
+
+   ```shell
+   conda deactivate
+   ```
+
+4. Install autogen
+   ```shell
+   pip install -U "autogen-agentchat" "autogen-ext" "autogen-ext[openai]"
    ```
 
 ## Autogen Studio
 
 1. Install the required package for Autogen Studio:
 
-   ```bash
+   ```shell
    pip install autogenstudio==0.4.0.dev41
    ```
 
 2. Run Autogen Studio (The UI provided for autogen)
-   ```bash
+   ```shell
    autogenstudio ui --port 8081 --appdir /Users/iaghidro/repos/autogen/studio
    ```
 
