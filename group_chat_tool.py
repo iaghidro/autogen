@@ -4,6 +4,7 @@ from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.ui import Console
 from shared.model_client import OpenAIModel, create_model_client
 from autogen_agentchat.base import Handoff
+from aioconsole import ainput  # Asynchronous input function
 
 from shared.executors import CodingAgent
 
@@ -23,7 +24,7 @@ async def main():
     task = "Create a chart of META and TESLA stock price changes. Save the chart to an image, and don't open the file."
     while True:
         await Console(team.run_stream(task=task))
-        task = input("Enter your feedback (type 'exit' to leave): ")
+        task = await ainput("Enter your feedback (type 'exit' to leave): ")
         if task.strip().lower() == "exit":
             break
 
